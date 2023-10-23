@@ -1,6 +1,6 @@
 #food composition tables
 # https://dzvoti.github.io/r4hces/fct_standardisation.html
-
+#### day 1 ####
 rm(list = ls())
 
 # loading libraries
@@ -97,3 +97,6 @@ data.df <- data.df %>% #Identifies the food group number from the fdc_id, and ap
                              ifelse(grepl("13_", Code), fgroup[13],
                              ifelse(grepl("14_", Code), fgroup[14], 
                              'NA')))))))))))))))
+
+
+#### day 2 ####
