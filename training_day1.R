@@ -5,6 +5,7 @@ library(dplyr)
 library(readr)
 library(haven)
 library(here)
+library(hrbrthemes)
 
 food_name <- "Maize"
 food_subname <- "Meal"
@@ -171,7 +172,7 @@ head(ihs5_unit_conversion_factors)
 
 # Consumption data
 
-ihs5_consumption <- 
+
 head(ihs5_consumption)
 dim(ihs5_consumption)
 
@@ -204,17 +205,66 @@ ihs5_consumption <-
        ) %>% 
   filter(consumedYN == 1)
 
-ihs5_consumption <- ihs5_consumption %>% 
-  dplyr::mutate(hh_members = sample(1:10, nrow(ihs5_consumption), replace = TRUE))
+# create a calculated column
 
-
-ihs5_consumption <- ihs5_consumption |>
-  mutate(consumption_per_person = consumption_quantity / hh_members)
-### assuming a 7-day recall
-
-ihs5_consumption <- ihs5_consumption %>% 
+ihs5_consumption <-  ihs5_consumption %>% 
+  dplyr::mutate(hh_members = sample(1:10, nrow(ihs5_consumption), replace = TRUE)) %>% 
+  mutate(consumption_per_person = consumption_quantity / hh_members) %>% 
   mutate(consumption_per_person_per_day = consumption_per_person/7)
 
+#creating a new column from food item
+
+ihs5_consumption %>% 
+  mutate(food_item_code = as.character(food_item))
 
 
+# Enriching data --------
 
+# Import the data
+ihs5_household_identifiers <-
+  read_dta(here::here("mwi-ihs5-sample-data", "hh_mod_a_filt_vMAPS.dta"))
+
+# Join the data
+ihs5_consumption_j1 <- ihs5_consumption %>% 
+  inner_join(ihs5_household_identifiers, by = "HHID")
+
+
+# Import the data
+ihs5_household_identifiers <-
+  read_dta(here::here("mwi-ihs5-sample-data", "hh_mod_a_filt_vMAPS.dta"))
+
+# Join the data
+ihs5_consumption <- ihs5_consumption |>
+  inner_join(ihs5_household_identifiers, by = c("HHID", "case_id"))
+
+
+df1 <- ihs5_consumption %>% pull(HHID) %>% unique()
+df2 <- df1[1:5]
+
+df1 %in% df2
+df2 %in% df1
+
+
+ihs5_consumption %>%
+  group_by(food_item, region) %>%
+  summarise(consumption_per_person = mean(consumption_per_person, na.rm = TRUE),
+            consumption_sd = sd(consumption_per_person, na.rm = TRUE))
+
+# Load the ggplot2 package
+library(ggplot2)
+
+#  Plot the data
+ihs5_consumption |>
+  # Add plot aesthetics
+  ggplot(aes(x = region, y = consumption_per_person, group = region)) +
+  # Add plot type
+  geom_boxplot() + 
+  theme_ipsum()
+
+writexl::write_xlsx(ihs5_consumption, here::here("ihs5_consumoption.xlsx"))
+
+ihs5_consumption <- ihs5_consumption %>% mutate(region = factor(region))
+
+summary(ihs5_consumption)
+
+sum(is.na(x) ==T)

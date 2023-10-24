@@ -100,3 +100,23 @@ data.df <- data.df %>% #Identifies the food group number from the fdc_id, and ap
 
 
 #### day 2 ####
+
+
+# Checking current names
+names(data.df)
+
+# Automatic renaming 
+
+for( i in 8:62){ #Loops through each column between column 8 and 64
+  first_row <- toString(data.df[1, i]) #Takes the first row for that column and assigns it to a variable
+  second_row <- toString(data.df[2, i]) #Takes the second row for that column and assigns it to a variable
+  split_string <- str_split(first_row, "\\(") #Splits the first row around "(", assigning the two resulting strings to a variable
+  units_int <- gsub("\\*|\\(|\\)", "", split_string[[1]][length(split_string[[1]])]) #Separates the units out from the split_string (everything after the last open bracket)
+  colnames(data.df)[i] <- paste0(second_row, units_int) #The column name is replaced with row 1 and the units from row 2
+}
+
+# Checking new names
+
+names(data.df)
+
+
