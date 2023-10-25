@@ -243,8 +243,7 @@ output_test_DSC <-
   Decimal_System_Checker(
     test_df_DSC,
     first = "ID1",
-    second =
-      "ID2",
+    second = "ID2",
     third = "ID3",
     fourth = "ID4"
   )
@@ -256,8 +255,7 @@ Decimal_System_Checker(
   test_df_DSC,
   first = "ID1",
   second = "ID2",
-  third =
-    "ID3",
+  third = "ID3",
   fourth = "ID4"
 )
 
@@ -309,7 +307,7 @@ Maps_dict_subset <-
 
 
 ihs5_consumption <-
-  read_dta(here::here("r4hces-data", "mwi-ihs5-sample-data", "HH_MOD_G1_vMAPS.dta")) #reads data in 
+  read_dta(here::here ("mwi-ihs5-sample-data", "HH_MOD_G1_vMAPS.dta")) #reads data in 
 
 ihs5_consumption <-
   hcesNutR::create_dta_labels(ihs5_consumption)   #extracts labels to a column
@@ -325,3 +323,4 @@ ihs5_consumption_subset <- ihs5_consumption %>%
 # Fuzzy Matching
 
 Fuzzy_Matcher(ihs5_consumption_subset, Maps_dict_subset) #Match items between lists
+
